@@ -85,15 +85,22 @@ const saveData = () => {
 };
 
 const updateOut = (id, change) => {
-  const updateOut = (id, change) => {
-    setItems(
-      items.map((item) => {
-        if (item.id !== id) return item;
-        const nextOut = Math.max(0, Math.min(item.total, item.out + change));
-        return { ...item, out: nextOut };
-      })
-    );
-  };
+  setItems(
+    items.map((item) => {
+      if (item.id !== id) return item;
+
+      const nextOut = Math.max(
+        0,
+        Math.min(item.total, item.out + change)
+      );
+
+      return {
+        ...item,
+        out: nextOut,
+      };
+    })
+  );
+};
 
   const updateName = (id, value) => {
     setItems(items.map((item) => (item.id === id ? { ...item, name: value } : item)));
