@@ -22,6 +22,7 @@ export default function App() {
 
   const [newName, setNewName] = useState("");
   const [newTotal, setNewTotal] = useState("");
+  const [lastSaved, setLastSaved] = useState("");
 
   useEffect(() => {
     localStorage.setItem("inventory-items", JSON.stringify(items));
@@ -59,6 +60,31 @@ export default function App() {
     setItems(items.map((item) => ({ ...item, out: 0 })));
   };
 
+const saveData = () => {
+  localStorage.setItem(
+    "inventory-items",
+    JSON.stringify(items)
+  );
+
+  const now = new Date();
+
+  const formatted =
+    now.getFullYear() +
+    "-" +
+    String(now.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(now.getDate()).padStart(2, "0") +
+    " " +
+    String(now.getHours()).padStart(2, "0") +
+    ":" +
+    String(now.getMinutes()).padStart(2, "0");
+
+  setLastSaved(formatted);
+
+  alert("저장 완료!");
+};
+
+const updateOut = (id, change) => {
   const updateOut = (id, change) => {
     setItems(
       items.map((item) => {
@@ -93,11 +119,57 @@ export default function App() {
             <p style={styles.subTitle}>나간 수량만 버튼으로 체크</p>
           </div>
 
-          <button onClick={resetAll} style={styles.resetButton}>
-            <RotateCcw size={18} />
-            초기화
-          </button>
-        </div>
+<div
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-end",
+    gap: "8px",
+  }}
+>
+  <div
+    style={{
+      fontSize: "12px",
+      color: "#7B8794",
+      fontWeight: 700,
+    }}
+  >
+    {lastSaved
+      ? `마지막 저장 : ${lastSaved}`
+      : "아직 저장 안됨"}
+  </div>
+
+  <div
+    style={{
+      display: "flex",
+      gap: "8px",
+    }}
+  >
+    <button
+      onClick={saveData}
+      style={{
+        border: "none",
+        background: "#6F35C5",
+        color: "#FFFFFF",
+        borderRadius: "22px",
+        padding: "12px 16px",
+        fontSize: "16px",
+        fontWeight: 900,
+        cursor: "pointer",
+      }}
+    >
+      저장
+    </button>
+
+    <button
+      onClick={resetAll}
+      style={styles.resetButton}
+    >
+      <RotateCcw size={18} />
+      초기화
+    </button>
+  </div>
+</div>
 
         <div style={styles.summaryGrid}>
           <SummaryCard title="총 수량" value={summary.total} bg="#FFE66B" />
