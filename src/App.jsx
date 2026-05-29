@@ -22,7 +22,9 @@ export default function App() {
 
   const [newName, setNewName] = useState("");
   const [newTotal, setNewTotal] = useState("");
-  const [lastSaved, setLastSaved] = useState("");
+  const [lastSaved, setLastSaved] = useState(
+  localStorage.getItem("inventory-lastSaved") || ""
+);
 
   useEffect(() => {
     localStorage.setItem("inventory-items", JSON.stringify(items));
