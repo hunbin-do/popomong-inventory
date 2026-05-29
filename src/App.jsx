@@ -3,66 +3,16 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Plus, Minus, Trash2 } from "lucide-react";
 
 const defaultItems = [
-  {
-    id: 1,
-    name: "포포몽 도톰한 에센셜 케어 펫티슈",
-    total: 120,
-    out: 0,
-  },
-  {
-    id: 2,
-    name: "포포몽 푸푸백 1롤",
-    total: 320,
-    out: 0,
-  },
-  {
-    id: 3,
-    name: "포포몽 어베니 이어클리너",
-    total: 20,
-    out: 0,
-  },
-  {
-    id: 4,
-    name: "포포몽 딥 클린 효소 치약 치즈향",
-    total: 20,
-    out: 0,
-  },
-  {
-    id: 5,
-    name: "포포몽 7+ 덴탈 스프레이 바닐라향",
-    total: 20,
-    out: 0,
-  },
-  {
-    id: 6,
-    name: "포포몽 컴포트 그루밍 미스트",
-    total: 20,
-    out: 0,
-  },
-  {
-    id: 7,
-    name: "포포몽 쿨링 미스트",
-    total: 20,
-    out: 0,
-  },
-  {
-    id: 8,
-    name: "포포몽 배리어 크림",
-    total: 20,
-    out: 0,
-  },
-  {
-    id: 9,
-    name: "포포몽 배리어 앰플",
-    total: 20,
-    out: 0,
-  },
-  {
-    id: 10,
-    name: "포포몽 말랑 실리콘 보틀",
-    total: 20,
-    out: 0,
-  },
+  { id: 1, name: "포포몽 도톰한 에센셜 케어 펫티슈", total: 120, out: 0 },
+  { id: 2, name: "포포몽 푸푸백 1롤", total: 320, out: 0 },
+  { id: 3, name: "포포몽 어베니 이어클리너", total: 20, out: 0 },
+  { id: 4, name: "포포몽 딥 클린 효소 치약 치즈향", total: 20, out: 0 },
+  { id: 5, name: "포포몽 7+ 덴탈 스프레이 바닐라향", total: 20, out: 0 },
+  { id: 6, name: "포포몽 컴포트 그루밍 미스트", total: 20, out: 0 },
+  { id: 7, name: "포포몽 쿨링 미스트", total: 20, out: 0 },
+  { id: 8, name: "포포몽 배리어 크림", total: 20, out: 0 },
+  { id: 9, name: "포포몽 배리어 앰플", total: 20, out: 0 },
+  { id: 10, name: "포포몽 말랑 실리콘 보틀", total: 20, out: 0 },
 ];
 
 export default function App() {
@@ -79,8 +29,8 @@ export default function App() {
   }, [items]);
 
   const summary = useMemo(() => {
-    const total = items.reduce((sum, item) => sum + Number(item.total), 0);
-    const out = items.reduce((sum, item) => sum + Number(item.out), 0);
+    const total = items.reduce((sum, item) => sum + item.total, 0);
+    const out = items.reduce((sum, item) => sum + item.out, 0);
 
     return {
       total,
@@ -89,211 +39,172 @@ export default function App() {
     };
   }, [items]);
 
-  const updateOut = (id, delta) => {
-    setItems((prev) =>
-      prev.map((item) => {
-        if (item.id !== id) return item;
-
-        const next = Math.max(
-          0,
-          Math.min(item.total, item.out + delta)
-        );
-
-        return {
-          ...item,
-          out: next,
-        };
-      })
-    );
-  };
-
-  const updateField = (id, field, value) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              [field]:
-                field === "name"
-                  ? value
-                  : Number(value),
-            }
-          : item
-      )
-    );
-  };
-
-  const deleteItem = (id) => {
-    setItems((prev) =>
-      prev.filter((item) => item.id !== id)
-    );
-  };
-
   const addItem = () => {
     if (!newName || !newTotal) return;
 
-    const newItem = {
-      id: Date.now(),
-      name: newName,
-      total: Number(newTotal),
-      out: 0,
-    };
-
-    setItems((prev) => [...prev, newItem]);
+    setItems([
+      ...items,
+      {
+        id: Date.now(),
+        name: newName,
+        total: Number(newTotal),
+        out: 0,
+      },
+    ]);
 
     setNewName("");
     setNewTotal("");
   };
 
+  const deleteItem = (id) => {
+    setItems(items.filter((item) => item.id !== id));
+  };
+
+  const updateOut = (id, change) => {
+    setItems(
+      items.map((item) => {
+        if (item.id !== id) return item;
+
+        const nextOut = Math.max(
+          0,
+          Math.min(item.total, item.out + change)
+        );
+
+        return {
+          ...item,
+          out: nextOut,
+        };
+      })
+    );
+  };
+
+  const updateName = (id, value) => {
+    setItems(
+      items.map((item) =>
+        item.id === id ? { ...item, name: value } : item
+      )
+    );
+  };
+
+  const updateTotal = (id, value) => {
+    setItems(
+      items.map((item) =>
+        item.id === id
+          ? { ...item, total: Number(value) || 0 }
+          : item
+      )
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-[#F5EEFF] p-4">
-      <div className="mx-auto max-w-md rounded-3xl bg-white p-4 shadow-xl">
+    <div style={{ padding: "20px", maxWidth: "700px", margin: "0 auto" }}>
+      <h1>포포몽 룰렛 재고관리</h1>
 
-        <h1 className="mb-4 text-2xl font-black text-[#5D2CA8]">
-          포포몽 룰렛 재고관리
-        </h1>
-
-        <div className="mb-5 grid grid-cols-3 gap-2">
-          <div className="rounded-2xl bg-yellow-200 p-3 text-center">
-            <p className="text-xs font-bold">총 수량</p>
-            <p className="text-xl font-black">{summary.total}</p>
-          </div>
-
-          <div className="rounded-2xl bg-purple-200 p-3 text-center">
-            <p className="text-xs font-bold">나간 수량</p>
-            <p className="text-xl font-black">{summary.out}</p>
-          </div>
-
-          <div className="rounded-2xl bg-green-200 p-3 text-center">
-            <p className="text-xs font-bold">남은 수량</p>
-            <p className="text-xl font-black">{summary.remain}</p>
-          </div>
-        </div>
-
-        <div className="mb-6 rounded-2xl bg-[#F8F5FF] p-3">
-          <p className="mb-2 text-sm font-bold">
-            상품 추가
-          </p>
-
-          <input
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            placeholder="상품 이름"
-            className="mb-2 w-full rounded-xl border p-3"
-          />
-
-          <input
-            value={newTotal}
-            type="number"
-            onChange={(e) => setNewTotal(e.target.value)}
-            placeholder="총 수량"
-            className="mb-2 w-full rounded-xl border p-3"
-          />
-
-          <button
-            onClick={addItem}
-            className="w-full rounded-xl bg-[#5D2CA8] p-3 font-bold text-white"
-          >
-            상품 등록
-          </button>
-        </div>
-
-        <div className="space-y-3">
-          {items.map((item) => {
-            const remain = item.total - item.out;
-
-            return (
-              <div
-                key={item.id}
-                className="rounded-2xl border bg-[#FCFBFF] p-3"
-              >
-
-                <div className="mb-2 flex justify-between gap-2">
-
-                  <input
-                    value={item.name}
-                    onChange={(e) =>
-                      updateField(
-                        item.id,
-                        "name",
-                        e.target.value
-                      )
-                    }
-                    className="flex-1 rounded-xl border p-2 font-bold"
-                  />
-
-                  <button
-                    onClick={() => deleteItem(item.id)}
-                    className="rounded-xl bg-red-100 p-3 text-red-500"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-
-                </div>
-
-                <div className="mb-3 grid grid-cols-3 gap-2 text-center">
-
-                  <div className="rounded-xl bg-gray-100 p-2">
-                    <p className="text-xs">총 재고</p>
-
-                    <input
-                      type="number"
-                      value={item.total}
-                      onChange={(e) =>
-                        updateField(
-                          item.id,
-                          "total",
-                          e.target.value
-                        )
-                      }
-                      className="w-full bg-transparent text-center text-lg font-black"
-                    />
-                  </div>
-
-                  <div className="rounded-xl bg-purple-100 p-2">
-                    <p className="text-xs">나감</p>
-                    <p className="text-lg font-black">
-                      {item.out}
-                    </p>
-                  </div>
-
-                  <div className="rounded-xl bg-green-100 p-2">
-                    <p className="text-xs">남음</p>
-                    <p className="text-lg font-black">
-                      {remain}
-                    </p>
-                  </div>
-
-                </div>
-
-                <div className="flex gap-2">
-
-                  <button
-                    onClick={() =>
-                      updateOut(item.id, -1)
-                    }
-                    className="flex-1 rounded-2xl bg-gray-200 p-4"
-                  >
-                    <Minus className="mx-auto" />
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      updateOut(item.id, 1)
-                    }
-                    className="flex-1 rounded-2xl bg-[#5D2CA8] p-4 text-white"
-                  >
-                    <Plus className="mx-auto" />
-                  </button>
-
-                </div>
-
-              </div>
-            );
-          })}
-        </div>
-
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          marginBottom: "20px",
+        }}
+      >
+        <div>총 수량: {summary.total}</div>
+        <div>나간 수량: {summary.out}</div>
+        <div>남은 수량: {summary.remain}</div>
       </div>
+
+      <div style={{ marginBottom: "20px" }}>
+        <input
+          placeholder="상품명"
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+        />
+
+        <input
+          type="number"
+          placeholder="수량"
+          value={newTotal}
+          onChange={(e) => setNewTotal(e.target.value)}
+        />
+
+        <button onClick={addItem}>상품 추가</button>
+      </div>
+
+      {items.map((item) => {
+        const remain = item.total - item.out;
+
+        return (
+          <div
+            key={item.id}
+            style={{
+              border: "1px solid #ddd",
+              padding: "12px",
+              marginBottom: "12px",
+              borderRadius: "8px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                marginBottom: "10px",
+              }}
+            >
+              <input
+                value={item.name}
+                onChange={(e) =>
+                  updateName(item.id, e.target.value)
+                }
+              />
+
+              <button
+                onClick={() => deleteItem(item.id)}
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                gap: "20px",
+                marginBottom: "10px",
+              }}
+            >
+              <div>
+                총 재고
+                <input
+                  type="number"
+                  value={item.total}
+                  onChange={(e) =>
+                    updateTotal(item.id, e.target.value)
+                  }
+                />
+              </div>
+
+              <div>나감: {item.out}</div>
+              <div>남음: {remain}</div>
+            </div>
+
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button
+                onClick={() =>
+                  updateOut(item.id, -1)
+                }
+              >
+                <Minus size={18} />
+              </button>
+
+              <button
+                onClick={() =>
+                  updateOut(item.id, 1)
+                }
+              >
+                <Plus size={18} />
+              </button>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
